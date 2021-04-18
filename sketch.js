@@ -1,106 +1,76 @@
-var helicopterIMG, helicopterSprite, packageSprite,packageIMG;
-var packageBody,ground;
-const Engine = Matter.Engine;
-const World = Matter.World;
-const Bodies = Matter.Bodies;
-const Body = Matter.Body;
+var canvas;
+var block1,block2,block3,block4;
+var ball, edges;
+var music;
 
-function preload()
-{
-	helicopterIMG=loadImage("helicopter.png")
-	packageIMG=loadImage("package.png")
+function preload(){
+    // load sound here
+    music = loadSound("music.mp3");
 }
 
-function setup() {
-	createCanvas(800, 700);
-	rectMode(CENTER);
-	
 
-	packageSprite=createSprite(width/2, 80, 10,10);
-	packageSprite.addImage(packageIMG)
-	packageSprite.scale=0.2
+function setup(){
+    canvas = createCanvas(800,600);
 
-	helicopterSprite=createSprite(width/2, 200, 10,10);
-	helicopterSprite.addImage(helicopterIMG)
-	helicopterSprite.scale=0.6
+    block1 = createSprite(0,580,350,30);
+    block1.shapeColor = "blue";
 
-	groundSprite=createSprite(width/2, height-35, width,10);
-	groundSprite.shapeColor=color(255)
+    block2 = createSprite(290,580,200,30);
+    block2.shapeColor = "yellow";
 
+    block3 = createSprite(505,580,200,30);
+    block3.shapeColor = "red";
 
-	engine = Engine.create();
-	world = engine.world;
+    block4 = createSprite(720,580,200,30);
+    block4.shapeColor = "green";
 
-	packageBody = Bodies.circle(width/2 , 200 , 5 , {restitution:0.4, isStatic:true});
-	World.add(world, packageBody);
-	
+    //create two more blocks i.e. block3 and block4 here
 
-	//Create a Ground
-	ground = Bodies.rectangle(width/2, 650, width, 10 , {isStatic:true} );
- 	World.add(world, ground);
-
- 	boxPosition=width/2-100
- 	boxY=610;
-
-
- 	boxleftSprite=createSprite(boxPosition, boxY, 20,100);
- 	boxleftSprite.shapeColor=color(255,0,0);
-
- 	boxLeftBody = Bodies.rectangle(boxPosition+20, boxY, 20,100 , {isStatic:true} );
- 	World.add(world, boxLeftBody);
-
- 	boxBase=createSprite(boxPosition+100, boxY+40, 200,20);
- 	boxBase.shapeColor=color(255,0,0);
-
- 	boxBottomBody = Bodies.rectangle(boxPosition+100, boxY+45-20, 200,20 , {isStatic:true} );
- 	World.add(world, boxBottomBody);
-
- 	boxleftSprite=createSprite(boxPosition+200 , boxY, 20,100);
- 	boxleftSprite.shapeColor=color(255,0,0);
-
- 	boxRightBody = Bodies.rectangle(boxPosition+200-20 , boxY, 20,100 , {isStatic:true} );
- 	World.add(world, boxRightBody);
-
-
-	Engine.run(engine);
-
-	
-	
-		
+    ball = createSprite(random(20,750),100, 40,40);
+    ball.shapeColor = rgb(255,255,255);
+    //write code to add velocityX and velocityY
+    ball.velocityX = 6;
+    ball.velocityY = 6;
 }
-
 
 function draw() {
-  rectMode(CENTER);
-  background(0);
- 
-  packageSprite.x= packageBody.position.x 
-  packageSprite.y= packageBody.position.y 
+    background(rgb(169,169,169));
+    edges=createEdgeSprites();
+    ball.bounceOff(edges);
+
+    
+    //write code to bounce off ball from the block1 
+    if(block1.isTouching(ball) && ball.bounceOff(block1)){
+        ball.shapeColor = "blue";
+        music.play();
+    }
 
 
-  if(keyCode === DOWN_ARROW){
-	Matter.Body.setStatic(packageBody,false);
-	
+    if(block2.isTouching(ball)){
+        ball.shapeColor = "yellow";
+        //write code to set velocityX and velocityY of ball as 0
+        ball.velocityX = 0;
+        ball.velocityY = 0;
+        //write code to stop music
+        music.stop();
+    }
+
+
+    //write code to bounce off ball from the block3
+    if(block3.isTouching(ball) && ball.bounceOff(block3)){
+        ball.shapeColor = "red";
+        music.play();
+    }
+
+
+    //write code to bounce off ball from the block4
+    if(block4.isTouching(ball)){
+        ball.shapeColor = "green";
+        ball.velocityX = 0;
+        ball.velocityY = 0;
+        music.stop();
+    }
+
+
+    drawSprites();
 }
-
-
-  if(keyCode === LEFT_ARROW){
-	 helicopterSprite.x = helicopterSprite.x-20;
-     Matter.Body.translate(packageBody,{x:-20,y:0})
-}
-
-  if(keyCode === RIGHT_ARROW){
-		helicopterSprite.x = helicopterSprite.x+20;
-		Matter.Body.translate(packageBody,{x:20,y:0})
-}
-  
-  
-  
-  drawSprites();
-  
- 
- 
-}
- 
-
-	
